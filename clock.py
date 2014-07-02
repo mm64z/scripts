@@ -41,17 +41,25 @@ def clockOut(maybeComment):
        str(timeSpent.seconds//3600) + ":" + str(timeSpent.seconds//60%60) +\
       " on " + currentComment
     startTime = 0
-    currentComment
+    currentComment = ""
 
 def comment(incComment):
     global currentComment
     # add a comment to the current task
     currentComment = " ".join(incComment)
 
+def helpLine(ignoreComment):
+    # add a comment to the current task
+    print "  ci <comment> - check in with optional comment"
+    print "  m  <comment> - add a comment, replacing an existing"
+    print "  co <comment> - check out with optional comment"
+    print "  ?            - print this message"
+
 options = {
     "ci" : clockIn,
     "co" : clockOut,
     "m"  : comment,
+    "?"  : helpLine,
 }
 
 def main():
