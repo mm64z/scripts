@@ -4,6 +4,7 @@
 import time
 import datetime
 
+dayTime = 0
 startTime = 0
 currentComment = ""
 
@@ -30,7 +31,11 @@ def clockIn(incComment):
 def clockOut(maybeComment):
     global startTime
     global currentComment
+    global dayTime
     # clock out of the current task
+    if startTime == 0:
+        print "Please clock in first"
+        return
     if len(maybeComment) != 0:
         comment(maybeComment)
 
@@ -40,8 +45,18 @@ def clockOut(maybeComment):
     print "Spent " + \
        str(timeSpent.seconds//3600) + ":" + str(timeSpent.seconds//60%60) +\
       " on " + currentComment
+    dayTime += timeSpent.seconds
     startTime = 0
     currentComment = ""
+
+def clockOutDay(ignoreComment):
+    global dayTime
+    if startTime != 0:
+        clockOut(ignoreComment)
+    print "For this day, total of " +  \
+        str(dayTime//3600) + ":" + str(dayTime//60%60)
+    dayTime = 0
+    
 
 def comment(incComment):
     global currentComment
@@ -53,11 +68,13 @@ def helpLine(ignoreComment):
     print "  ci <comment> - check in with optional comment"
     print "  m  <comment> - add a comment, replacing an existing"
     print "  co <comment> - check out with optional comment"
+    print "  coo          - check out for the day"
     print "  ?            - print this message"
 
 options = {
     "ci" : clockIn,
     "co" : clockOut,
+    "coo": clockOutDay,
     "m"  : comment,
     "?"  : helpLine,
 }
@@ -67,9 +84,9 @@ def main():
     keepGoing = True
     while (keepGoing):
         printState()
-        userInput = raw_input("ci, co, m, ? : ")
+        userInput = raw_input("ci, co, coo, m, ? : ")
         inputList = userInput.split(" ")
-        options[inputList[0]](inputList[1:])
+        options.get(inputList[0], helpLine)(inputList[1:])
         
 
 if __name__ == "__main__":
