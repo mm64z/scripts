@@ -7,6 +7,7 @@ import datetime
 dayTime = 0
 startTime = 0
 currentComment = ""
+timePerTask = {}
 
 def printState():
     if startTime == 0:
@@ -46,8 +47,12 @@ def clockOut(maybeComment):
        str(timeSpent.seconds//3600) + ":" + str(timeSpent.seconds//60%60) +\
       " on " + currentComment
     dayTime += timeSpent.seconds
+    timePerTask[currentComment] = timePerTask.get(currentComment, 0) + timeSpent.seconds
     startTime = 0
     currentComment = ""
+
+def formatTime(seconds):
+    return str(seconds//3600) + ":" + str(seconds//60%60)
 
 def clockOutDay(ignoreComment):
     global dayTime
@@ -55,6 +60,9 @@ def clockOutDay(ignoreComment):
         clockOut(ignoreComment)
     print "For this day, total of " +  \
         str(dayTime//3600) + ":" + str(dayTime//60%60)
+    for key, value in timePerTask.iteritems():
+        print key + " : " + formatTime(value)
+    print ""
     dayTime = 0
     
 
