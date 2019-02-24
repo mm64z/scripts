@@ -8,6 +8,9 @@ dayTime = 0
 startTime = 0
 currentComment = ""
 timePerTask = {}
+updateJira = False
+jiraUsername = ""
+jiraPassword = ""
 
 def printState():
     if startTime == 0:
@@ -62,9 +65,18 @@ def clockOutDay(ignoreComment):
         str(dayTime//3600) + ":" + str(dayTime//60%60)
     for key, value in timePerTask.iteritems():
         print key + " : " + formatTime(value)
+        if updateJira:
+            sendJiraUpdate(key, value)
     print ""
     dayTime = 0
-    
+
+#  https://stackoverflow.com/a/25491297/3014691
+def sendJiraUpdate(ticket, timeInSeconds):
+    import requests
+    url = 'https:' # TODO find jira server name
+    payload = {"started":"","timeSpendSeconds":timeInSeconds} # TODO today's date
+    headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+    r = requests.post(url, data=payload, headers=headers)
 
 def comment(incComment):
     global currentComment
@@ -99,4 +111,6 @@ def main():
 
 if __name__ == "__main__":
     import sys
+    if sys.argv[1] == "jira":
+        updateJira = True
     main()
